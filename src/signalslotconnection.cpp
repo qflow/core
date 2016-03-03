@@ -27,7 +27,7 @@ SignalSlotConnectionPrivate::~SignalSlotConnectionPrivate()
 QObject* SignalSlotConnection::findById(QQmlContext *context, QObject *obj, QString id)
 {
     if(id == context->nameForObject(obj)) return obj;
-    foreach(QObject* child, obj->children())
+    for(QObject* child: obj->children())
     {
         if(id == context->nameForObject(child)) return child;
     }

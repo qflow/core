@@ -190,7 +190,7 @@ template<typename T>
 RadixTreeNodeList<T> RadixTreeNode<T>::descendants() const
 {
     RadixTreeNodeList<T> list;
-    Q_FOREACH (RadixTreeNode<T> child, d->_children) {
+    for(RadixTreeNode<T> child: d->_children) {
         list.append(child);
         list.append(child.descendants());
     }

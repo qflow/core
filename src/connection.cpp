@@ -64,7 +64,7 @@ void Connection::update()
         if(acd) acd->acceptConnection(this);
         if(acs) acs->acceptConnection(this);
 
-        foreach(Connection* con, *connections)
+        for(Connection* con: *connections)
         {
             if(con->destination() == d->_source)
             {
@@ -110,7 +110,7 @@ void Connection::setLive(bool value)
     if(!value && d->_upstream)
     {
 
-        foreach (Connection* con, siblings()) {
+        for(Connection* con: siblings()) {
             if(con != this && con->live()) updateUpstream = false;
         }
     }

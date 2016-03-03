@@ -126,7 +126,7 @@ QList<TreeItem*> TreeItem::descendants() const
 {
     Q_D(const TreeItem);
     QList<TreeItem*> list;
-    Q_FOREACH (TreeItem* child, d->_children) {
+    for(TreeItem* child: d->_children) {
         list.append(child);
         list.append(child->descendants());
     }
