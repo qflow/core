@@ -1,6 +1,7 @@
 import qbs
 
 QmlPlugin{
+    cpp.cxxLanguageVersion: "c++11"
     files: [
         "coreplugin.h",
         "coreplugin.cpp",
