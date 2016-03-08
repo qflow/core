@@ -17,11 +17,47 @@ namespace QFlow{
 class FunctorBase
 {
 public:
-    virtual QVariant call(QVariantList args) = 0;
+    virtual QVariant invoke(QVariantList args) = 0;
     virtual std::type_index argType(int i) const = 0;
     virtual std::type_index returnType() const = 0;
     virtual std::size_t argCount() const = 0;
+};
+template<typename R, typename ... ArgTypes>
+class FunctorImpl2 : public FunctorBase
+{
+public:
+    FunctorImpl2(std::function<R(ArgTypes...)> func) : f(func)
+    {
+    }
+    std::type_index returnType() const
+    {
+        return std::type_index(typeid(R));
+    }
+    std::size_t argCount() const
+    {
+        return sizeof...(ArgTypes);
+    }
+    std::type_index argType(int i) const
+    {
+        return _argTypes[i];
+    }
+    R invoke2(ArgTypes... args)
+    {
+        return f(std::forward<ArgTypes>(args)...);
+    }
+    R invoke3(std::tuple<ArgTypes...> tup)
+    {
+        return invoke_helper(std::forward<std::tuple<ArgTypes...>>(tup),
+                             std::make_index_sequence<sizeof...(ArgTypes)>{});
+    }
 protected:
+    std::function<R(ArgTypes...)> f;
+    const QList<std::type_index> _argTypes = {std::type_index(typeid(ArgTypes)) ...};
+    template<typename Tup, std::size_t... index>
+    void invoke_helper(Tup&& tup, std::index_sequence<index...>)
+    {
+        return f(std::get<index>(std::forward<Tup>(tup))...);
+    }
     template<typename T>
     T advance(QVariantList::iterator* it)
     {
@@ -32,81 +68,32 @@ protected:
 };
 
 template<typename R, typename ... ArgTypes>
-class Functor : public FunctorBase
+class Functor : public FunctorImpl2<R, ArgTypes...>
 {
 public:
-    Functor(std::function<R(ArgTypes...)> func) : f(func)
+    Functor(std::function<R(ArgTypes...)> func) : FunctorImpl2<R, ArgTypes...>(func)
     {
     }
-    QVariant call(QVariantList args)
+    QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
         R res = f(advance<ArgTypes>(&it) ... );
         return QVariant::fromValue(res);
     }
-    R call2(ArgTypes... args)
-    {
-        return f(std::forward<ArgTypes>(args)...);
-    }
-    std::type_index returnType() const
-    {
-        return std::type_index(typeid(R));
-    }
-    std::size_t argCount() const
-    {
-        return sizeof...(ArgTypes);
-    }
-    const std::type_index argType(int i) const
-    {
-        return _argTypes[i];
-    }
-private:
-    std::function<R(ArgTypes...)> f;
-    const QList<std::type_index> _argTypes = {std::type_index(typeid(ArgTypes)) ...};
 };
-
 template<typename ... ArgTypes>
-class Functor<void, ArgTypes...> : public FunctorBase
+class Functor<void, ArgTypes...> : public FunctorImpl2<void, ArgTypes...>
 {
 public:
-    Functor(std::function<void(ArgTypes...)> func) : f(func)
+    Functor(std::function<void(ArgTypes...)> func) : FunctorImpl2<void, ArgTypes...>(func)
     {
     }
-    QVariant call(QVariantList args)
+    QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
         f(advance<ArgTypes>(&it) ... );
         return QVariant();
     }
-    void call3(std::tuple<ArgTypes...> tup)
-    {
-        return invoke_helper(std::forward<std::tuple<ArgTypes...>>(tup),
-                             std::make_index_sequence<sizeof...(ArgTypes)>{});
-    }
-    void call2(ArgTypes... args)
-    {
-        f(std::forward<ArgTypes>(args)...);
-    }
-    std::type_index returnType() const
-    {
-        return std::type_index(typeid(void));
-    }
-    std::size_t argCount() const
-    {
-        return sizeof...(ArgTypes);
-    }
-    std::type_index argType(int i) const
-    {
-        return _argTypes[i];
-    }
-private:
-    template<typename Tup, std::size_t... index>
-    void invoke_helper(Tup&& tup, std::index_sequence<index...>)
-    {
-        return f(std::get<index>(std::forward<Tup>(tup))...);
-    }
-    std::function<void(ArgTypes...)> f;
-    const QList<std::type_index> _argTypes = {std::type_index(typeid(ArgTypes)) ...};
 };
 }
 #endif // FUNCTOR_H
