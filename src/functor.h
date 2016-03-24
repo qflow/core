@@ -9,6 +9,7 @@
 #include <typeinfo>
 #include <typeindex>
 #include <type_traits>
+#include <array>
 
 
 namespace QFlow{
@@ -22,6 +23,7 @@ public:
     virtual std::type_index returnType() const = 0;
     virtual std::size_t argCount() const = 0;
 };
+
 template<typename R, typename ... ArgTypes>
 class FunctorImpl2 : public FunctorBase
 {
@@ -52,11 +54,16 @@ public:
     }
 protected:
     std::function<R(ArgTypes...)> f;
-    const QList<std::type_index> _argTypes = {std::type_index(typeid(ArgTypes)) ...};
+    const std::array<std::type_index, sizeof...(ArgTypes)> _argTypes = {std::type_index(typeid(ArgTypes)) ...};
     template<typename Tup, std::size_t... index>
-    void invoke_helper(Tup&& tup, std::index_sequence<index...>)
+    R invoke_helper(Tup&& tup, std::index_sequence<index...>)
     {
         return f(std::get<index>(std::forward<Tup>(tup))...);
+    }
+    template<std::size_t... index>
+    R invoke_helper(QVariantList& list, std::index_sequence<index...>)
+    {
+        return f(qvariant_cast<ArgTypes>(list[index])...);
     }
     template<typename T>
     T advance(QVariantList::iterator* it)
@@ -77,7 +84,7 @@ public:
     QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
-        R res = f(advance<ArgTypes>(&it) ... );
+        R res = f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
         return QVariant::fromValue(res);
     }
 };
@@ -91,10 +98,15 @@ public:
     QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
-        f(advance<ArgTypes>(&it) ... );
+        f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
         return QVariant();
     }
 };
+template<typename R, typename ... ArgTypes>
+Functor<R,ArgTypes...> make_functor(std::function<R(ArgTypes...)> func)
+{
+    return Functor<R,ArgTypes...>(func);
+}
 }
 #endif // FUNCTOR_H
 
