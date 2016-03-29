@@ -72,7 +72,7 @@ public:
     bool exists(QString key) const;
     void add(RadixTreeNode<T> node);
     bool isValid() const;
-    RadixTreeNodeList<T> descendants() const;
+    QList<RadixTreeNode<T> > descendants() const;
 private:
     QExplicitlySharedDataPointer<RadixTreeNodePrivate<T> > d;
 };
@@ -187,9 +187,9 @@ bool RadixTreeNode<T>::isValid() const
     return d->_valid;
 }
 template<typename T>
-RadixTreeNodeList<T> RadixTreeNode<T>::descendants() const
+QList<RadixTreeNode<T> > RadixTreeNode<T>::descendants() const
 {
-    RadixTreeNodeList<T> list;
+    QList<RadixTreeNode<T> > list;
     for(RadixTreeNode<T> child: d->_children) {
         list.append(child);
         list.append(child.descendants());
