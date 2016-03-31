@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 2.8.11)
-set (CMAKE_PREFIX_PATH "/home/michal/Qt/5.6/gcc_64/lib/cmake")
 project(core)
 add_definitions(-DCORE_LIBRARY)
 aux_source_directory(. SRC_LIST)
