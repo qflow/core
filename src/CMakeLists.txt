@@ -12,7 +12,7 @@ find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Qml)
 include_directories(${Qt5Qml_PRIVATE_INCLUDE_DIRS})
 
 add_library(core SHARED ${SRC_LIST})
-set_property(TARGET core PROPERTY CXX_STANDARD 11)
+set_property(TARGET core PROPERTY CXX_STANDARD 14)
 target_include_directories (core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(core Qt5::Core Qt5::Qml)

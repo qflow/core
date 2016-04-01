@@ -14,6 +14,8 @@
 
 namespace QFlow{
 
+template<typename R, typename ... ArgTypes>
+class FunctorImpl2;
 
 class FunctorBase
 {
@@ -54,7 +56,7 @@ public:
     }
 protected:
     std::function<R(ArgTypes...)> f;
-    const std::array<std::type_index, sizeof...(ArgTypes)> _argTypes = {std::type_index(typeid(ArgTypes)) ...};
+    const std::array<std::type_index, sizeof...(ArgTypes)> _argTypes = {{std::type_index(typeid(ArgTypes)) ...}};
     template<typename Tup, std::size_t... index>
     R invoke_helper(Tup&& tup, std::index_sequence<index...>)
     {
@@ -65,15 +67,14 @@ protected:
     {
         return f(qvariant_cast<ArgTypes>(list[index])...);
     }
-    template<typename T>
-    T advance(QVariantList::iterator* it)
-    {
-        it->operator --();
-        QVariant var = it->operator *();
-        return qvariant_cast<T>(var);
-    }
 };
-
+template<typename T>
+T advance(QVariantList::iterator* it)
+{
+    it->operator --();
+    QVariant var = it->operator *();
+    return qvariant_cast<T>(var);
+}
 template<typename R, typename ... ArgTypes>
 class Functor : public FunctorImpl2<R, ArgTypes...>
 {
@@ -81,10 +82,11 @@ public:
     Functor(std::function<R(ArgTypes...)> func) : FunctorImpl2<R, ArgTypes...>(func)
     {
     }
+
     QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
-        R res = f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
+        R res = this->f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
         return QVariant::fromValue(res);
     }
 };
@@ -98,7 +100,7 @@ public:
     QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
-        f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
+        this->f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
         return QVariant();
     }
 };
