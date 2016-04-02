@@ -10,6 +10,7 @@
 #include <typeindex>
 #include <type_traits>
 #include <array>
+#include <experimental/any>
 
 
 namespace QFlow{
@@ -24,6 +25,7 @@ public:
     virtual std::type_index argType(int i) const = 0;
     virtual std::type_index returnType() const = 0;
     virtual std::size_t argCount() const = 0;
+    virtual std::experimental::any invokeAny(std::vector<std::experimental::any> args);
 };
 
 template<typename R, typename ... ArgTypes>
@@ -75,6 +77,13 @@ T advance(QVariantList::iterator* it)
     QVariant var = it->operator *();
     return qvariant_cast<T>(var);
 }
+template<typename T>
+T advance(std::vector<std::experimental::any>::iterator* it)
+{
+    it->operator --();
+    std::experimental::any var = it->operator *();
+    return std::experimental::any_cast<T>(var);
+}
 template<typename R, typename ... ArgTypes>
 class Functor : public FunctorImpl2<R, ArgTypes...>
 {
@@ -88,6 +97,12 @@ public:
         QVariantList::iterator it = args.end();
         R res = this->f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
         return QVariant::fromValue(res);
+    }
+    QVariant invokeAny(std::vector<std::experimental::any> args)
+    {
+        std::vector<std::experimental::any>::iterator it = args.end();
+        R res = this->f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
+        return std::experimental::any(res);
     }
 };
 template<typename ... ArgTypes>

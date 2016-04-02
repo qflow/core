@@ -11,7 +11,7 @@ set(QT_MIN_VERSION "5.6.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Qml)
 include_directories(${Qt5Qml_PRIVATE_INCLUDE_DIRS})
 
-add_library(core SHARED ${SRC_LIST})
+add_library(core SHARED ${SRC_LIST} "functor.h")
 set_property(TARGET core PROPERTY CXX_STANDARD 14)
 target_include_directories (core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
