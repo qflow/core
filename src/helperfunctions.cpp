@@ -86,7 +86,7 @@ int toFourCC(const QString str)
 }
 QString getStringFromUnsignedChar( unsigned char *str ){
     QString result = "";
-    int lengthOfString = strlen( reinterpret_cast<const char*>(str) );
+    size_t lengthOfString = strlen( reinterpret_cast<const char*>(str) );
 
     for( int i = 0; i < lengthOfString; i++ ){
         result.append(str[i]);
