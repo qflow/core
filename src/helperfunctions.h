@@ -5,6 +5,7 @@
 #include "timespan.h"
 #include "range.h"
 #include "errorinfo.h"
+#include "fileinfo.h"
 #include <QObject>
 #include <QQmlEngine>
 
@@ -27,6 +28,8 @@ public:
     Q_INVOKABLE QString localHostName();
     Q_INVOKABLE bool copy(const QString & fileName, const QString & newName);
     Q_INVOKABLE bool mkdir(const QString & dirName) const;
+    Q_INVOKABLE QVariantList getFileList(QString dir, QString pattern);
+    Q_INVOKABLE FileInfo getFileInfo(QString str);
     Q_INVOKABLE QString currentDir();
     Q_INVOKABLE Timespan newTimespan(QString value);
 signals:

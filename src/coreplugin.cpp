@@ -18,6 +18,7 @@
 #include "future.h"
 #include "systeminfo.h"
 #include "sortfilterproxymodel.h"
+#include "fileinfo.h"
 
 namespace QFlow{
 
@@ -55,7 +56,9 @@ void CorePlugin::registerTypes(const char *uri)
     qmlRegisterType<SortFilterProxyModel>(uri, 1, 0, "SortFilterProxyModel");
     qRegisterMetaType<WaitHandle>("WaitHandle");
     qRegisterMetaType<Future>("Future");
+    qRegisterMetaType<FileInfo>("FileInfo");
 
+    QMetaType::registerConverter<FileInfo, QString>(&FileInfo::absoluteFilePath);
     QMetaType::registerConverter<Timespan, QString>(&Timespan::toString);
     QMetaType::registerConverter<QString, Timespan>(&Timespan::fromString);
     QMetaType::registerConverter<Timespan, QJsonValue>(&Timespan::toJson);
@@ -76,6 +79,7 @@ void CorePlugin::registerTypes(const char *uri)
     QMetaType::registerConverter<int, ErrorInfo>(&ErrorInfo::fromInt);
 
 
+    qmlRegisterUncreatableType<FileInfo>(uri, 1, 0, "FileInfo", "FileInfo cannot be created");
     qmlRegisterUncreatableType<Rational>(uri, 1, 0, "Rational", "Rational cannot be created");
     qmlRegisterUncreatableType<Timespan>(uri, 1, 0, "Timespan", "Timespan cannot be created");
     qmlRegisterUncreatableType<Future>(uri, 1, 0, "Future", "Future cannot be created");

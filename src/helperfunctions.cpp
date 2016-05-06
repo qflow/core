@@ -66,6 +66,24 @@ QString HelperFunctions::currentDir()
 {
     return QDir::currentPath();
 }
+QVariantList HelperFunctions::getFileList(QString dir, QString pattern)
+{
+    QStringList filters;
+    filters << pattern;
+    QDir directory(dir);
+    QFileInfoList infos = directory.entryInfoList(filters, QDir::Files | QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+    QVariantList res;
+    for(QFileInfo file: infos)
+    {
+        FileInfo info(file);
+        res.append(QVariant::fromValue(info));
+    }
+    return res;
+}
+FileInfo HelperFunctions::getFileInfo(QString str)
+{
+    return FileInfo(str);
+}
 
 qreal Math::scale(qreal value, qreal fromMin, qreal fromMax, qreal toMin, qreal toMax)
 {
