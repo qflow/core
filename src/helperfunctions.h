@@ -32,6 +32,7 @@ public:
     Q_INVOKABLE FileInfo getFileInfo(QString str);
     Q_INVOKABLE QString currentDir();
     Q_INVOKABLE Timespan newTimespan(QString value);
+    Q_INVOKABLE void sleepSecs(int value);
 signals:
 };
 

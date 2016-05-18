@@ -4,6 +4,7 @@
 #include <QHostInfo>
 #include <QFile>
 #include <QDir>
+#include <QThread>
 
 namespace QFlow{
 
@@ -131,5 +132,9 @@ QString expand_environment_variables(QString s)
 Timespan HelperFunctions::newTimespan(QString value)
 {
     return Timespan::fromString(value);
+}
+void HelperFunctions::sleepSecs(int value)
+{
+    QThread::sleep(value);
 }
 }
