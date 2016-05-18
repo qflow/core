@@ -33,6 +33,7 @@ public:
     Q_INVOKABLE QString currentDir();
     Q_INVOKABLE Timespan newTimespan(QString value);
     Q_INVOKABLE void sleepSecs(int value);
+    Q_INVOKABLE void sleepMSecs(int value);
 signals:
 };
 

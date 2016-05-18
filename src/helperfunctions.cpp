@@ -137,4 +137,8 @@ void HelperFunctions::sleepSecs(int value)
 {
     QThread::sleep(value);
 }
+void HelperFunctions::sleepMSecs(int value)
+{
+    QThread::msleep(value);
+}
 }
