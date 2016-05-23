@@ -34,6 +34,7 @@ public:
     Q_INVOKABLE Timespan newTimespan(QString value);
     Q_INVOKABLE void sleepSecs(int value);
     Q_INVOKABLE void sleepMSecs(int value);
+    Q_INVOKABLE QByteArray getenv(QString varname);
 signals:
 };
 

@@ -141,4 +141,8 @@ void HelperFunctions::sleepMSecs(int value)
 {
     QThread::msleep(value);
 }
+QByteArray HelperFunctions::getenv(QString varname)
+{
+    return qgetenv(varname.toLatin1());
+}
 }
