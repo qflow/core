@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QDir>
 #include <QThread>
+#include <QDirIterator>
 
 namespace QFlow{
 
@@ -81,6 +82,19 @@ QVariantList HelperFunctions::getFileList(QString dir, QString pattern)
     }
     return res;
 }
+QVariantList HelperFunctions::getFileListRecursive(QString dir, QString pattern)
+{
+    QDirIterator it(dir, QStringList() << pattern, QDir::Files, QDirIterator::Subdirectories);
+    QVariantList res;
+    while (it.hasNext())
+    {
+        it.next();
+        FileInfo info(it.fileInfo());
+        res.append(QVariant::fromValue(info));
+    }
+    return res;
+}
+
 FileInfo HelperFunctions::getFileInfo(QString str)
 {
     return FileInfo(str);

@@ -45,6 +45,8 @@ void BinaryBuffer::close()
 {
     Q_D(BinaryBuffer);
     QIODevice::close();
+    d->_writeBuffer.clear();
+    d->_readBuffer.clear();
     d->_dataAvailableCondition.wakeAll();
 }
 
@@ -68,7 +70,11 @@ bool BinaryBuffer::waitForReadyRead(int msecs)
     else
     {
         QMutexLocker lock(&d->_mutex);
-        if(msecs == -1) return d->_dataAvailableCondition.wait(&d->_mutex);
+        if(msecs == -1)
+        {
+            bool res = d->_dataAvailableCondition.wait(&d->_mutex);
+            return res;
+        }
         else return d->_dataAvailableCondition.wait(&d->_mutex, msecs);
     }
 }

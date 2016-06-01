@@ -37,9 +37,18 @@ QString FileInfo::absolutePath() const
 {
     return _fileInfo.absolutePath();
 }
+QString FileInfo::relativeFilePath(QString dirStr) const
+{
+    QDir dir(dirStr);
+    return dir.relativeFilePath(_fileInfo.absoluteFilePath());
+}
 QString FileInfo::baseName() const
 {
     return _fileInfo.baseName();
+}
+bool FileInfo::exists() const
+{
+    return _fileInfo.exists();
 }
 bool FileInfo::operator==(const FileInfo &other) const
 {

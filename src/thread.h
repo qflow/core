@@ -28,6 +28,10 @@ Q_SIGNALS:
 public Q_SLOTS:
     void test();
 private:
+    static void append(QQmlListProperty<QObject> *list, QObject *obj);
+    static int count(QQmlListProperty<QObject> *list);
+    static QObject* at(QQmlListProperty<QObject> *list, int i);
+    static void clear(QQmlListProperty<QObject> *list);
     const QScopedPointer<ThreadPrivate> d_ptr;
     Q_DECLARE_PRIVATE(Thread)
 };

@@ -19,6 +19,8 @@ public:
     Q_INVOKABLE bool isDir() const;
     Q_INVOKABLE QString absolutePath() const;
     Q_INVOKABLE QString baseName() const;
+    Q_INVOKABLE QString relativeFilePath(QString dir) const;
+    Q_INVOKABLE bool exists() const;
     bool operator==(const FileInfo &other) const;
 private:
     QFileInfo _fileInfo;

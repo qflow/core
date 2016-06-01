@@ -123,7 +123,8 @@ public:
     QVariant invoke(QVariantList args)
     {
         QVariantList::iterator it = args.end();
-        this->f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
+        //this->f(std::forward<ArgTypes>(advance<ArgTypes>(&it)) ... );
+        this->f(advance<ArgTypes>(&it) ... );
         return QVariant();
     }
 };
