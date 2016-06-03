@@ -23,6 +23,8 @@ public:
     int childCount() const;
     bool exists(QString key) const;
     QList<TreeItem*> add(QString uri);
+    QList<TreeItem*> remove(QString uri);
+    bool isLeaf() const;
     bool isValid() const;
     QList<TreeItem*> descendants() const;
     QVariant dataAt(int column) const;

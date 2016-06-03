@@ -11,7 +11,8 @@ public:
     bool _valid;
     TreeItem* _parent;
     QString _fullUri;
-    TreeItemPrivate() : _valid(false), _parent(NULL)
+    TreeItem* _thisItem;
+    TreeItemPrivate(TreeItem* thisItem) : _valid(false), _parent(NULL), _thisItem(thisItem)
     {
 
     }
@@ -29,17 +30,58 @@ public:
         }
         return result;
     }
+    TreeItem* findInternal(QString uri) const
+    {
+        QStringList elements = uri.split('.');
+        if(_children.contains(elements[0]))
+        {
+            TreeItem* child = _children[elements[0]];
+            if(elements.count() == 1) return child;
+            elements.removeFirst();
+            return child->find(TreeItemPrivate::path(elements));
+        }
+        else return NULL;
+    }
+    QList<TreeItem*> addInternal(QString uri)
+    {
+        QList<TreeItem*> newList;
+        QStringList elements = uri.split('.');
+        if(elements.count() == 1)
+        {
+            TreeItem* newItem = new TreeItem(uri, _thisItem);
+            newList << newItem;
+            return newList;
+        }
+        if(!_children.contains(elements[0]))
+        {
+            QString childKey = elements[0];
+            TreeItem* newChild = new TreeItem(childKey, _thisItem);
+            newList << newChild;
+        }
+        TreeItem* child = _children[elements[0]];
+        elements.removeFirst();
+        QString newKey = TreeItemPrivate::path(elements);
+        return newList << child->d_ptr->addInternal(newKey);
+    }
+    QList<TreeItem*> removeInternal(QString uri)
+    {
+        QList<TreeItem*> removedItems;
+        TreeItem* item = findInternal(uri);
+        if(item->isValid()) removedItems << item;
+        //if(item->parent()) removedItems << removeInternal(item->parent());
+        return removedItems;
+    }
+
 };
 
-TreeItem::TreeItem() : d_ptr(new TreeItemPrivate())
+TreeItem::TreeItem() : d_ptr(new TreeItemPrivate(this))
 {
 
 }
-TreeItem::TreeItem(QString key, TreeItem* parent) : d_ptr(new TreeItemPrivate())
+TreeItem::TreeItem(QString key, TreeItem* parent) : d_ptr(new TreeItemPrivate(this))
 {
     Q_D(TreeItem);
     d->_key = key;
-    d->_valid = true;
     d->_parent = parent;
     d->_parent->d_ptr->_children[key] = this;
     d->_data.append(key);
@@ -53,12 +95,11 @@ TreeItem::TreeItem(QString key, TreeItem* parent) : d_ptr(new TreeItemPrivate())
     }
     d->_data.append(d->_fullUri);
 }
-TreeItem::TreeItem(QVariantList data, QString uri) : d_ptr(new TreeItemPrivate())
+TreeItem::TreeItem(QVariantList data, QString uri) : d_ptr(new TreeItemPrivate(this))
 {
     Q_D(TreeItem);
     d->_key = uri;
     d->_data = data;
-    d->_valid = true;
 }
 TreeItem::~TreeItem()
 {
@@ -81,42 +122,41 @@ TreeItem* TreeItem::parent() const
 TreeItem* TreeItem::find(QString uri) const
 {
     Q_D(const TreeItem);
-    QStringList elements = uri.split('.');
-    if(d->_children.contains(elements[0]))
-    {
-        TreeItem* child = d->_children[elements[0]];
-        if(elements.count() == 1) return child;
-        elements.removeFirst();
-        return child->find(TreeItemPrivate::path(elements));
-    }
-    else return NULL;
+    return d->findInternal(uri);
 }
 bool TreeItem::exists(QString key) const
 {
     return find(key);
 }
+
 QList<TreeItem*> TreeItem::add(QString uri)
 {
     Q_D(TreeItem);
-    QList<TreeItem*> newList;
-    QStringList elements = uri.split('.');
-    if(elements.count() == 1)
+    QList<TreeItem*> items = d->addInternal(uri);
+    for(TreeItem* item: items)
     {
-        TreeItem* newItem = new TreeItem(uri, this);
-        newList << newItem;
-        return newList;
+        if(item->uri() == uri)
+        {
+            item->d_ptr->_valid = true;
+            return items;
+        }
     }
-    if(!d->_children.contains(elements[0]))
-    {
-        QString childKey = elements[0];
-        TreeItem* newChild = new TreeItem(childKey, this);
-        newList << newChild;
-    }
-    TreeItem* child = d->_children[elements[0]];
-    elements.removeFirst();
-    QString newKey = TreeItemPrivate::path(elements);
-    return newList << child->add(newKey);
+    return items;
 }
+QList<TreeItem*> TreeItem::remove(QString uri)
+{
+    Q_D(TreeItem);
+    QList<TreeItem*> removedItems;
+    TreeItem* item = d->findInternal(uri);
+    if(item && item->isLeaf() && item->isValid())
+    {
+        removedItems << item;
+        item->parent()->d_ptr->_children.remove(item->key());
+    }
+
+    return removedItems;
+}
+
 bool TreeItem::isValid() const
 {
     Q_D(const TreeItem);
@@ -168,5 +208,10 @@ QString TreeItem::uri() const
 {
     Q_D(const TreeItem);
     return d->_fullUri;
+}
+bool TreeItem::isLeaf() const
+{
+    Q_D(const TreeItem);
+    return d->_children.isEmpty();
 }
 }
