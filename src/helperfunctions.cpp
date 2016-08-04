@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QThread>
 #include <QDirIterator>
+#include <QProcess>
 
 namespace QFlow{
 
@@ -158,5 +159,10 @@ void HelperFunctions::sleepMSecs(int value)
 QByteArray HelperFunctions::getenv(QString varname)
 {
     return qgetenv(varname.toLatin1());
+}
+void HelperFunctions::startExternalProgram(QString cmd)
+{
+    QProcess* process = new QProcess();
+    process->start(cmd);
 }
 }

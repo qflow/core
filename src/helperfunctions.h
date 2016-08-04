@@ -36,6 +36,7 @@ public:
     Q_INVOKABLE void sleepSecs(int value);
     Q_INVOKABLE void sleepMSecs(int value);
     Q_INVOKABLE QByteArray getenv(QString varname);
+    Q_INVOKABLE void startExternalProgram(QString cmd);
 signals:
 };
 
