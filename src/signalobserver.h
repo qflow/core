@@ -4,6 +4,7 @@
 #include "coreplugin_global.h"
 #include <QObject>
 #include <QVariant>
+#include <memory>
 
 namespace QFlow{
 
@@ -23,5 +24,6 @@ private:
     const QScopedPointer<SignalObserverPrivate> d_ptr;
     Q_DECLARE_PRIVATE(SignalObserver)
 };
+typedef std::shared_ptr<SignalObserver> SignalObserverPointer;
 }
 #endif // SIGNALOBSERVER_H
