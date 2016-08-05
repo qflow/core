@@ -1,1 +1,4 @@
-
+platform:
+  - x64
+configuration:
+  - Release
