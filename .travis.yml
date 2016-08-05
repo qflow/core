@@ -1,3 +1,10 @@
 sudo: required
 dist: trusty
 language: cpp
+compiler:
+  - clang
+  - gcc
+script:
+  - mkdir build
+  - cd build
+  - cmake .. && make
