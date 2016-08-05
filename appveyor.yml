@@ -5,6 +5,7 @@ configuration:
 environment:
   QTDIR: C:\Qt\5.7\msvc2015_64
 before_build:
-  - echo Running cmake...
-  - cd c:\projects\core
-  - cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=c:/projects/core-build
+  - mkdir c:\projects\core-build
+  - cd c:\projects\core-build
+  - cmake ../core -G "Visual Studio 14 2015 Win64"
+  - dir
