@@ -10,3 +10,5 @@ before_build:
   - cd c:\projects\core
   - cmake -G "Visual Studio 14 2015 Win64"
   - dir
+after_build:
+- dir
