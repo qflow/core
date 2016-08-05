@@ -7,6 +7,7 @@ compiler:
 before_install:
   - sudo add-apt-repository ppa:beineri/opt-qt57-trusty -y
   - sudo apt-get update -q
+  - sudo apt-get install qt57base -y
 script:
   - mkdir build
   - cd build
