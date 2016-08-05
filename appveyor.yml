@@ -4,8 +4,9 @@ configuration:
   - Release
 environment:
   QTDIR: C:\Qt\5.7\msvc2015_64
+build:
+  project: core.sln
 before_build:
-  - mkdir c:\projects\core-build
-  - cd c:\projects\core-build
-  - cmake ../core -G "Visual Studio 14 2015 Win64"
+  - cd c:\projects\core
+  - cmake -G "Visual Studio 14 2015 Win64"
   - dir
