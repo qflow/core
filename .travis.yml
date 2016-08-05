@@ -4,6 +4,9 @@ language: cpp
 compiler:
   - clang
   - gcc
+before_install:
+  - sudo add-apt-repository ppa:beineri/opt-qt57-trusty
+  - sudo apt-get update
 script:
   - mkdir build
   - cd build
