@@ -2,8 +2,6 @@
 #include <vector>
 #include <tuple>
 
-using namespace std;
-
 template <typename C>
 struct get_template_type;
 
@@ -56,11 +54,11 @@ static future<std::tuple<typename get_template_type<Futures>::type...>> when_all
 // the values of the input futures are passed through to the result future as a tuple.
 // the caller may select which values to passthrough
 template<size_t... Indices, class Function, class TupleOfFutures>
-static future<result_of_t<Function()>> when_all_execute_and_select(executor_type& ex, Function&& f,
+static future<std::result_of_t<Function()>> when_all_execute_and_select(executor_type& ex, Function&& f,
 TupleOfFutures&& futures);
 // multi-agent when_all_execute_and_select
 template<size_t... Indices, class Function, class TupleOfFutures, class... Factories>
-static future<result_of_t<Function()>> when_all_execute_and_select(executor_type& ex, Function f,
+static future<std::result_of_t<Function()>> when_all_execute_and_select(executor_type& ex, Function f,
 shape_type shape,
 TupleOfFutures&& futures,
 Factories... factories);
@@ -68,7 +66,7 @@ Factories... factories);
 // asynchronously invokes f(value) when the input future's value is ready
 // returns the result f(value) via future
 template<class Function, class Future>
-static future<result_of_t<Function()>> then_execute(executor_type& ex, Function&& f, Future& fut);
+static future<std::result_of_t<Function()>> then_execute(executor_type& ex, Function&& f, Future& fut);
 // multi-agent then_execute returning user-specified container
 // asynchronously invokes f(idx, value, shared_args...) when the input future's value is ready
 // returns the results of f(idx, value, shared_args...) via future<Container>
@@ -81,7 +79,7 @@ Factories... factories);
 // asynchronously invokes f(idx, value) when the input future's value is ready
 // returns the results of f(idx, value, shared_args...) via future<container<...>>
 template<class Function, class Future, class... Factories>
-static future<container<result_of_t<Function()>>> then_execute(executor_type& ex, Function f,
+static future<container<std::result_of_t<Function()>>> then_execute(executor_type& ex, Function f,
 shape_type shape,
 Future& fut,
 Factories... factories);
@@ -89,7 +87,7 @@ Factories... factories);
 // asynchronously invokes f()
 // returns the result of f()'s via future
 template<class Function>
-static future<result_of_t<Function()>> async_execute(executor_type& ex, Function&& f);
+static future<std::result_of_t<Function()>> async_execute(executor_type& ex, Function&& f);
 // multi-agent async_execute returning user-specified container
 // asynchronously invokes f(idx, shared_args...)
 // returns the results of f(idx, shared_args...) via future<Container>
@@ -101,14 +99,14 @@ Factories... factories);
 // asynchronously invokes f(idx, shared_args...)
 // returns the results of f(idx, shared_args...) via future<container<...>>
 template<class Function, class... Factories>
-static future<container<result_of_t<Function()>>> async_execute(executor_type& ex, Function f,
+static future<container<std::result_of_t<Function()>>> async_execute(executor_type& ex, Function f,
 shape_type shape,
 Factories... factories);
 // single-agent execute
 // synchronously invokes f()
 // returns the result of f()
 template<class Function>
-static result_of_t<Function()> execute(executor_type& ex, Function&& f);
+static std::result_of_t<Function()> execute(executor_type& ex, Function&& f);
 // multi-agent execute returning user-specified container
 // synchronously invokes f(idx, shared_args...)
 // returns the results of f(idx, shared_args...) via Container
@@ -120,7 +118,7 @@ Factories... factories);
 // synchronously invokes f(idx, shared_args...)
 // returns the results of f(idx, shared_args...) via container<...>
 template<class Function, class... Factories>
-static container<result_of_t<Function()>> execute(executor_type& ex, Function f,
+static container<std::result_of_t<Function()>> execute(executor_type& ex, Function f,
 shape_type shape,
 Factories... factories);
 };
