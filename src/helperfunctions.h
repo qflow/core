@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE QString localHostName();
     Q_INVOKABLE bool copy(const QString & fileName, const QString & newName);
     Q_INVOKABLE bool mkdir(const QString & dirName) const;
+    Q_INVOKABLE bool remove(const QString & fileName) const;
     Q_INVOKABLE QVariantList getFileList(QString dir, QString pattern);
     Q_INVOKABLE QVariantList getFileListRecursive(QString dir, QString pattern);
     Q_INVOKABLE FileInfo getFileInfo(QString str);

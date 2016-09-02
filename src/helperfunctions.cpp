@@ -60,6 +60,10 @@ bool HelperFunctions::copy(const QString &fileName, const QString &newName)
 {
     return QFile::copy(fileName, newName);
 }
+bool HelperFunctions::remove(const QString & fileName) const
+{
+    return QFile::remove(fileName);
+}
 bool HelperFunctions::mkdir(const QString &dirName) const
 {
     QDir dir;
