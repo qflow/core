@@ -1,7 +1,7 @@
 #include "future.h"
 
 namespace QFlow{
-Promise<void>::Promise() : d_ptr(new PromisePrivate<void>())
+/*Promise<void>::Promise() : d_ptr(new PromisePrivate<void>())
 {
 
 }
@@ -37,5 +37,5 @@ FutureBase<R> FutureBase<void>::then(Func&& func)
         };
     }
     return future;
-}
+}*/
 }

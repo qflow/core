@@ -12,7 +12,7 @@ set(CMAKE_AUTOMOC ON)
 
 set(QT_MIN_VERSION "5.6.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Qml)
-include_directories(./executors ${Qt5Qml_PRIVATE_INCLUDE_DIRS})
+include_directories(${Qt5Qml_PRIVATE_INCLUDE_DIRS})
 
 add_library(core SHARED ${DATABASE_SRCS} "functor.h")
 set_property(TARGET core PROPERTY CXX_STANDARD 14)

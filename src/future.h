@@ -14,7 +14,7 @@
 
 namespace QFlow{
 
-template<typename T>
+/*template<typename T>
 class FutureBase;
 
 template<>
@@ -230,7 +230,7 @@ FutureBase<R> FutureBase<T>::then(Func&& func)
         };
     }
     return future;
-}
+}*/
 
 
 
