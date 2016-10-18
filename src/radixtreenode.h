@@ -266,7 +266,7 @@ RadixTreeNode<T> RadixTreeNode<T>::add(QString uri, T data)
 template<typename T>
 void RadixTreeNode<T>::prune(RadixTreeNode<T> node)
 {
-    if(node.isLeaf() && !node.d->_genuine)
+    if(node.isLeaf() && !node.d->_genuine && node.isValid())
     {
         node.parent().d->_children.remove(node.key());
         if(node.parent().isValid()) prune(node.parent());
