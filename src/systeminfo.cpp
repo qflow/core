@@ -7,6 +7,14 @@
 #include "sys/sysinfo.h"
 struct sysinfo memInfo;
 #endif
+#ifdef Q_OS_MAC
+#include <sys/resource.h>
+#include <mach/vm_statistics.h>
+#include <mach/mach_types.h>
+#include <mach/mach_init.h>
+#include <mach/mach_host.h>
+struct rusage r_usage;
+#endif
 #ifdef Q_OS_WIN
 #include "windows.h"
 #include "TCHAR.h"
@@ -95,6 +103,9 @@ double SystemInfo::getCpuUsage() const
     double result = counterVal.doubleValue;
     return result;
 #endif
+#ifdef Q_OS_MACOS
+	return 0;
+#endif
 }
 qulonglong SystemInfo::getTotalMem() const
 {
@@ -110,6 +121,29 @@ qulonglong SystemInfo::getTotalMem() const
     DWORDLONG totalPhysMem = memInfo.ullTotalPhys;
     return totalPhysMem;
 #endif
+#ifdef Q_OS_MACOS
+	vm_size_t page_size;
+	mach_port_t mach_port;
+	mach_msg_type_number_t count;
+	vm_statistics64_data_t vm_stats;
+	
+	mach_port = mach_host_self();
+	count = sizeof(vm_stats) / sizeof(natural_t);
+	if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
+		KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
+										  (host_info64_t)&vm_stats, &count))
+	{
+		long long free_memory = (int64_t)vm_stats.free_count * (int64_t)page_size;
+		
+		long long used_memory = ((int64_t)vm_stats.active_count +
+								 (int64_t)vm_stats.inactive_count +
+								 (int64_t)vm_stats.wire_count) *  (int64_t)page_size;
+		
+		return free_memory + used_memory;
+	} else {
+		return 0;
+	}
+#endif
 }
 qulonglong SystemInfo::getFreeMem() const
 {
@@ -124,6 +158,23 @@ qulonglong SystemInfo::getFreeMem() const
     GlobalMemoryStatusEx(&memInfo);
     DWORDLONG physMemFree = memInfo.ullAvailPhys;
     return physMemFree;
+#endif
+#ifdef Q_OS_MACOS
+	vm_size_t page_size;
+	mach_port_t mach_port;
+	mach_msg_type_number_t count;
+	vm_statistics64_data_t vm_stats;
+	
+	mach_port = mach_host_self();
+	count = sizeof(vm_stats) / sizeof(natural_t);
+	if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
+		KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
+										  (host_info64_t)&vm_stats, &count))
+	{
+		return (int64_t)vm_stats.free_count * (int64_t)page_size;
+	} else {
+		return 0;
+	}
 #endif
 }
 int SystemInfo::getThreadCount() const
