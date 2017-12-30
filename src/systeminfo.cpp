@@ -94,7 +94,7 @@ double SystemInfo::getCpuUsage() const
     PDH_HQUERY cpuQuery;
     PDH_HCOUNTER cpuTotal;
     PdhOpenQuery(NULL, NULL, &cpuQuery);
-    PdhAddCounter(cpuQuery, "\\Processor(_Total)\\% Processor Time", NULL, &cpuTotal);
+    PdhAddCounter(cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &cpuTotal);
     PdhCollectQueryData(cpuQuery);
     QThread::sleep(1);
     PdhCollectQueryData(cpuQuery);
