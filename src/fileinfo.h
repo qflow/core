@@ -26,4 +26,5 @@ private:
     QFileInfo _fileInfo;
 };
 }
+Q_DECLARE_METATYPE(QFlow::FileInfo)
 #endif

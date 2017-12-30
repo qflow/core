@@ -274,5 +274,5 @@ private:
     std::shared_future<QVariant> _internal;
 };
 }
-
+Q_DECLARE_METATYPE(QFlow::Future)
 #endif // FUTURE_H

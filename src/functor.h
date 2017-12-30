@@ -10,6 +10,8 @@
 #include <typeindex>
 #include <type_traits>
 #include <array>
+#include "integer_sequence.h"
+
 /*#ifdef Q_OS_LINUX
 #include <experimental/any>
 #endif*/
@@ -58,18 +60,18 @@ public:
     R invoke3(std::tuple<ArgTypes...> tup)
     {
         return invoke_helper(std::forward<std::tuple<ArgTypes...>>(tup),
-                             std::make_index_sequence<sizeof...(ArgTypes)>{});
+							 make_index_sequence<sizeof...(ArgTypes)>{});
     }
 protected:
     std::function<R(ArgTypes...)> f;
     const std::array<std::type_index, sizeof...(ArgTypes)> _argTypes = {{std::type_index(typeid(ArgTypes)) ...}};
     template<typename Tup, std::size_t... index>
-    R invoke_helper(Tup&& tup, std::index_sequence<index...>)
+	R invoke_helper(Tup&& tup, index_sequence<index...>)
     {
         return f(std::get<index>(std::forward<Tup>(tup))...);
     }
     template<std::size_t... index>
-    R invoke_helper(QVariantList& list, std::index_sequence<index...>)
+	R invoke_helper(QVariantList& list, index_sequence <index...>)
     {
         return f(qvariant_cast<ArgTypes>(list[index])...);
     }
